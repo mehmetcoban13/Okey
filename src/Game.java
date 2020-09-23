@@ -1,6 +1,7 @@
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 
@@ -21,6 +22,98 @@ public class Game {
         ArrayList<Tile> jokers = setJoker();
         setFalseJokers(jokers);
         tileDistribution();
+        System.out.println("***All Hands***");
+        for (Player player: players) {
+            System.out.println(player.getName() + ": " + player.getRack());
+        }
+        ArrayList<Player> playerList = seqFirst(numberFirst(this.players));
+        double max = playerList.get(0).getPoint();
+        int index = 0;
+        for (int i=0; i<playerList.size(); i++) {
+            if (playerList.get(i).getPoint() > max){
+                max = playerList.get(i).getPoint();
+                index = i;
+            }
+        }
+        System.out.println("\n"+players.get(index).getName() + " Has The Best Hand!");
+    }
+
+    private ArrayList<Player> seqFirst(ArrayList<Player> playerList){
+        ArrayList<Player> players = new ArrayList<>();
+        for (int i = 0 ; i<playerList.size();i++){
+            players.add(playerList.get(i)) ;
+        }
+        for (Player player : players) {
+            HashMap<Color, ArrayList<Tile>> map  = new HashMap<>();
+            Collections.sort(player.getRack(), new Sequential());
+            for (Tile tile: player.getRack()) {
+                map.putIfAbsent(tile.getColor(), new ArrayList<Tile>());
+                if(!map.get(tile.getColor()).stream().
+                        anyMatch(element -> element.getNumber() == tile.getNumber())){
+                    map.get(tile.getColor()).add(tile);
+                }
+            }for (ArrayList<Tile> tiles : map.values()){
+                if (tiles.size()<3){
+                    continue;
+                }
+                else {
+                    int count = 0;
+                    for(int i=0; i<tiles.size()-1; i++){
+                        if (tiles.get(i).getNumber()+1 == tiles.get(i+1).getNumber()){
+                            count++;
+                        }
+                        else {
+                            if(count == 2){
+                                player.setPoint(player.getPoint()+1.0);
+                            }else if (count == 3){
+                                player.setPoint(player.getPoint()+1.5);
+                            }else if(count == 4){
+                                player.setPoint(player.getPoint()+2.0);
+                            }
+                            count = 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        return players;
+    }
+    private ArrayList<Player> numberFirst(ArrayList<Player> playerList){
+        ArrayList<Player> players = new ArrayList<>();
+        for (int i = 0 ; i<playerList.size();i++){
+            players.add(playerList.get(i)) ;
+        }
+        for (Player player : players) {
+            if (player.getRack().stream().anyMatch(element -> element.getColor() == Color.Joker)){
+                player.setPoint(player.getPoint()+1);
+            }
+            HashMap<Integer, ArrayList<Tile>> map  = new HashMap<>();
+            Collections.sort(player.getRack(), new SameNumber());
+            for (Tile tile: player.getRack()) {
+                map.putIfAbsent(tile.getNumber(), new ArrayList<Tile>());
+                if(!map.get(tile.getNumber()).stream().
+                        anyMatch(element -> element.getColor() == tile.getColor())){
+                    map.get(tile.getNumber()).add(tile);
+                }
+            }
+            for (ArrayList<Tile> tiles : map.values()){
+                if (tiles.size()<3){ continue; }
+                else if(tiles.size()==3){
+                    for (Tile tile : tiles) {
+                        player.getRack().remove(tile);
+                    }
+                    player.setPoint(player.getPoint()+1);
+                }else if (tiles.size() == 4){
+                    for (Tile tile : tiles) {
+                        player.getRack().remove(tile);
+                    }
+                    player.setPoint(player.getPoint()+1.5);
+                }
+            }
+        }
+
+        return players;
     }
 
     private void initializePool(){

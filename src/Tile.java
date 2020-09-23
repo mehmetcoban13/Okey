@@ -16,7 +16,7 @@ public class Tile implements Comparable<Tile>{
         return this.getPointer()%13 - tile1.getPointer()%13;
     }
     public String toString(){
-        return color + " " + number + " " + pointer;
+        return color + " " + number ; //+ " " + pointer
     }
 
     public void setColor(Color color) {
@@ -44,13 +44,13 @@ public class Tile implements Comparable<Tile>{
     }
 }
 
-class Sequential implements Comparator<Tile> {
+class SameNumber implements Comparator<Tile> {
     public int compare(Tile a, Tile b) {
         return a.getPointer()%13 - b.getPointer()%13;
     }
 }
 
-class SameNumber implements Comparator<Tile> {
+class Sequential implements Comparator<Tile> {
     public int compare(Tile a, Tile b) {
         return a.getPointer()%52 - b.getPointer()%52;
     }

@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class Player {
     private String name;
     private ArrayList<Tile> rack;
-    private int point;
+    private double point;
 
     public Player(String name){
         setName(name);
@@ -18,7 +18,7 @@ public class Player {
         this.rack = rack;
     }
 
-    public void setPoint(int point) {
+    public void setPoint(double point) {
         this.point = point;
     }
 
@@ -30,7 +30,7 @@ public class Player {
         return this.rack;
     }
 
-    public int getPoint() {
+    public double getPoint() {
         return point;
     }
 }
